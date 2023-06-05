@@ -8,7 +8,7 @@ DEFAULT_STAMINA: int = 80
 
 class Character:
     """Общее описание класса. Базовые навыки для всех персонажей."""
-    BRIEFF_DESC_CHAR_CLASS: str = 'отважный любитель приключений'
+    BRIEF_DESC_CHAR_CLASS: str = 'отважный любитель приключений'
     RANGE_VALUE_ATTACK: tuple[int, int] = (1, 3)
     RANGE_VALUE_DEFENCE: tuple[int, int] = (1, 5)
     SPECIAL_SKILL: str = 'Удача'
@@ -30,13 +30,13 @@ class Character:
                 f'{self.SPECIAL_SKILL} {self.SPECIAL_BUFF}.')
 
     def __str__(self) -> str:
-        return f'{self.__class__.__name__} - {self.BRIEFF_DESC_CHAR_CLASS}'
+        return f'{self.__class__.__name__} - {self.BRIEF_DESC_CHAR_CLASS}'
 
 
 class Warrior(Character):
     """Класс воина. Навыки и способности воина."""
-    BRIEFF_DESC_CHAR_CLASS: str = (' дерзкий воин ближнего боя. '
-                                   'Сильный, выносливый и отважный')
+    BRIEF_DESC_CHAR_CLASS: str = (' дерзкий воин ближнего боя. '
+                                  'Сильный, выносливый и отважный')
     RANGE_VALUE_ATTACK: tuple[int, int] = (3, 5)
     RANGE_VALUE_DEFENCE: tuple[int, int] = (5, 10)
     SPECIAL_BUFF: int = DEFAULT_STAMINA + 25
@@ -45,8 +45,8 @@ class Warrior(Character):
 
 class Mage(Character):
     """Класс мага.Навыки и способности мага."""
-    BRIEFF_DESC_CHAR_CLASS: str = (' находчивый воин дальнего боя. '
-                                   'Обладает высоким интеллектом')
+    BRIEF_DESC_CHAR_CLASS: str = (' находчивый воин дальнего боя. '
+                                  'Обладает высоким интеллектом')
     RANGE_VALUE_ATTACK: tuple[int, int] = (5, 10)
     RANGE_VALUE_DEFENCE: tuple[int, int] = (-2, 2)
     SPECIAL_BUFF: int = DEFAULT_ATTACK + 40
@@ -55,8 +55,8 @@ class Mage(Character):
 
 class Healer(Character):
     """Класс лекаря. Навыки и способности лекаря"""
-    BRIEFF_DESC_CHAR_CLASS: str = (' могущественный заклинатель. '
-                                   'Черпает силы из природы, веры и духов')
+    BRIEF_DESC_CHAR_CLASS: str = (' могущественный заклинатель. '
+                                  'Черпает силы из природы, веры и духов')
     RANGE_VALUE_ATTACK: tuple[int, int] = (-3, -1)
     RANGE_VALUE_DEFENCE: tuple[int, int] = (2, 5)
     SPECIAL_BUFF: int = DEFAULT_DEFENCE + 30
@@ -76,19 +76,20 @@ def choice_char_class(char_name: str) -> Character:
         selected_class = input('Введи название персонажа, '
                                'за которого хочешь играть: Воитель - warrior, '
                                'Маг - mage, Лекарь - healer ')
-        char_class: Character = game_classes[selected_class](char_name)
-        print(char_class)
-        approve_choice = input('Нажми (Y), чтобы подтвердить выбор, '
-                               'или любую другую кнопку, '
-                               'чтобы выбрать другого персонажа ').lower()
+        if selected_class in game_classes:
+            char_class: Character = game_classes[selected_class](char_name)
+            print(char_class)
+            approve_choice = input('Нажми (Y), чтобы подтвердить выбор, '
+                                   'или любую другую кнопку, '
+                                   'чтобы выбрать другого персонажа ').lower()
     return char_class
 
 
 def start_training(char_class: Character) -> str:
     """Основная функция тренировки."""
-    commands: dict = {'attack': Character.attack(char_class),
-                      'defence': Character.defence(char_class),
-                      'special': Character.special(char_class)}
+    commands: dict = {'attack': Character.attack,
+                      'defence': Character.defence,
+                      'special': Character.special}
     print('Потренируйся управлять своими навыками.')
     cmd: str = ''
     while cmd != 'skip':
@@ -98,7 +99,7 @@ def start_training(char_class: Character) -> str:
                     'special — чтобы использовать свою суперсилу. '
                     'Если не хочешь тренироваться, введи команду skip. ')
         if cmd in commands:
-            print(commands[cmd])
+            print(commands[cmd](char_class))
     return 'Тренировка окончена.'
 
 
